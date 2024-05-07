@@ -41,20 +41,35 @@ jobs:
     - name: Build (mac x86_64 only)
       if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
       run: cargo build --target x86_64-apple-darwin --verbose
+
+    - name: Build (mac aarch64 only)
+      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
+      run: cargo build --verbose
     
     - name: Build
+      if: matrix.config.os != 'macos-latest'
       run: cargo build --verbose
 
     - name: Run tests (mac x86_64 only)
       if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
       run: cargo test --target x86_64-apple-darwin --verbose
+    
+    - name: Run tests (mac aarch64 only)
+      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
+      run: cargo test --verbose
       
     - name: Run tests
+      if: matrix.config.os != 'macos-latest'
       run: cargo test --verbose
 
     - name: Run (mac x86_64 only)
       if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
       run: cargo run --target x86_64-apple-darwin
       
+    - name: Run (mac aarch64 only)
+      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
+      run: cargo run
+
     - name: Run
+      if: matrix.config.os != 'macos-latest'
       run: cargo run
