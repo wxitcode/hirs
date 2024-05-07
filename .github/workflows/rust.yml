@@ -32,25 +32,29 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: install dependencies (mac only)
+    - name: install dependencies (mac x86_64 only)
       if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
       run: |
         rustup show
         rustup target add x86_64-apple-darwin
 
-    - name: Build (mac only)
+    - name: Build (mac x86_64 only)
       if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
       run: cargo build --target x86_64-apple-darwin --verbose
-
-    - name: Run (mac only)
-      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
-      run: cargo run --target x86_64-apple-darwin
     
     - name: Build
       run: cargo build --verbose
+
+    - name: Run tests (mac x86_64 only)
+      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
+      run: cargo test --target x86_64-apple-darwin --verbose
       
     - name: Run tests
       run: cargo test --verbose
 
+    - name: Run (mac x86_64 only)
+      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
+      run: cargo run --target x86_64-apple-darwin
+      
     - name: Run
       run: cargo run
