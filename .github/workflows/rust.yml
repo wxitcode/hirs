@@ -41,6 +41,10 @@ jobs:
     - name: Build (mac only)
       if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
       run: cargo build --target x86_64-apple-darwin --verbose
+
+    - name: Run (mac only)
+      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
+      run: cargo run --target x86_64-apple-darwin
     
     - name: Build
       run: cargo build --verbose
@@ -49,4 +53,4 @@ jobs:
       run: cargo test --verbose
 
     - name: Run
-      run: cargo r
+      run: cargo run
