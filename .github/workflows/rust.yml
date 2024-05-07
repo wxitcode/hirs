@@ -83,8 +83,8 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: hirs-${{ matrix.config.rust_target }}${{ matrix.config.os == 'windows-latest' && '.exe' || '' }}
-        path: hirs-${{ matrix.config.rust_target }}
+        name: hirs-${{ matrix.config.rust_target }}
+        path: hirs-${{ matrix.config.rust_target }}${{ matrix.config.os == 'windows-latest' && '.exe' || '' }}
 
   pre-release:
     name: "Pre Release"
