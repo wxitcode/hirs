@@ -2,9 +2,9 @@ name: Rust
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
@@ -30,78 +30,78 @@ jobs:
     runs-on: ${{ matrix.config.os }}
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: install dependencies (mac x86_64 only)
-      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
-      run: |
-        rustup show
-        rustup target add x86_64-apple-darwin
+      - name: install dependencies (mac x86_64 only)
+        if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
+        run: |
+          rustup show
+          rustup target add x86_64-apple-darwin
 
-    - name: Build (mac x86_64 only)
-      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
-      run: |
-        cargo build --target x86_64-apple-darwin --verbose
-        cp target/x86_64-apple-darwin/debug/hirs hirs-${{ matrix.config.rust_target }}
+      - name: Build (mac x86_64 only)
+        if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
+        run: |
+          cargo build --target ${{ matrix.config.rust_target }} --verbose
+          cp target/x86_64-apple-darwin/debug/hirs hirs-${{ matrix.config.rust_target }}
 
-    - name: Build (mac aarch64 only)
-      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
-      run: |
-        cargo build --verbose
-        cp target/debug/hirs hirs-${{ matrix.config.rust_target }}
-        
-    - name: Build
-      if: matrix.config.os != 'macos-latest'
-      run: |
-        cargo build --verbose
-        cp target/debug/hirs${{ matrix.config.os == 'windows-latest' && '.exe' || '' }} hirs-${{ matrix.config.rust_target }}${{ matrix.config.os == 'windows-latest' && '.exe' || '' }}
+      - name: Build (mac aarch64 only)
+        if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
+        run: |
+          cargo build --verbose
+          cp target/debug/hirs hirs-${{ matrix.config.rust_target }}
 
-    - name: Run tests (mac x86_64 only)
-      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
-      run: cargo test --target x86_64-apple-darwin --verbose
-    
-    - name: Run tests (mac aarch64 only)
-      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
-      run: cargo test --verbose
-      
-    - name: Run tests
-      if: matrix.config.os != 'macos-latest'
-      run: cargo test --verbose
+      - name: Build
+        if: matrix.config.os != 'macos-latest'
+        run: |
+          cargo build --verbose
+          cp target/debug/hirs${{ matrix.config.os == 'windows-latest' && '.exe' || '' }} hirs-${{ matrix.config.rust_target }}${{ matrix.config.os == 'windows-latest' && '.exe' || '' }}
 
-    - name: Run (mac x86_64 only)
-      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
-      run: cargo run --target x86_64-apple-darwin
-      
-    - name: Run (mac aarch64 only)
-      if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
-      run: cargo run
+      - name: Run tests (mac x86_64 only)
+        if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
+        run: cargo test --target ${{ matrix.config.rust_target }} --verbose
 
-    - name: Run
-      if: matrix.config.os != 'macos-latest'
-      run: cargo run
+      - name: Run tests (mac aarch64 only)
+        if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
+        run: cargo test --verbose
 
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: hirs-${{ matrix.config.rust_target }}
-        path: hirs-${{ matrix.config.rust_target }}${{ matrix.config.os == 'windows-latest' && '.exe' || '' }}
+      - name: Run tests
+        if: matrix.config.os != 'macos-latest'
+        run: cargo test --verbose
+
+      - name: Run (mac x86_64 only)
+        if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'x86_64'
+        run: cargo run --target ${{ matrix.config.rust_target }}
+
+      - name: Run (mac aarch64 only)
+        if: matrix.config.os == 'macos-latest' && matrix.config.arch == 'aarch64'
+        run: cargo run
+
+      - name: Run
+        if: matrix.config.os != 'macos-latest'
+        run: cargo run
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hirs-${{ matrix.config.rust_target }}
+          path: hirs-${{ matrix.config.rust_target }}${{ matrix.config.os == 'windows-latest' && '.exe' || '' }}
 
   pre-release:
     name: "Pre Release"
     needs: [build]
     runs-on: "ubuntu-latest"
     steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-    - name: Create Release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
-        prerelease: true
-        title: "Development Build"
-        files: |
-          hirs-x86_64-unknown-linux-gnu/hirs-x86_64-unknown-linux-gnu
-          hirs-x86_64-apple-darwin/hirs-x86_64-apple-darwin
-          hirs-aarch64-apple-darwin/hirs-aarch64-apple-darwin
-          hirs-x86_64-pc-windows-msvc/hirs-x86_64-pc-windows-msvc.exe
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+      - name: Create Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            hirs-x86_64-unknown-linux-gnu/hirs-x86_64-unknown-linux-gnu
+            hirs-x86_64-apple-darwin/hirs-x86_64-apple-darwin
+            hirs-aarch64-apple-darwin/hirs-aarch64-apple-darwin
+            hirs-x86_64-pc-windows-msvc/hirs-x86_64-pc-windows-msvc.exe
